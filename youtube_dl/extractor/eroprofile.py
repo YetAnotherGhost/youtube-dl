@@ -4,10 +4,7 @@ import re
 
 from .common import InfoExtractor
 from ..compat import compat_urllib_parse_urlencode
-from ..utils import (
-    ExtractorError,
-    unescapeHTML
-)
+from ..utils import ExtractorError
 
 
 class EroProfileIE(InfoExtractor):
@@ -77,20 +74,21 @@ class EroProfileIE(InfoExtractor):
             [r"glbUpdViews\s*\('\d*','(\d+)'", r'p/report/video/(\d+)'],
             webpage, 'video id', default=None)
 
-        video_url = unescapeHTML(self._search_regex(
-            r'<source src="([^"]+)', webpage, 'video url'))
+        info = self._parse_html5_media_entries(url, webpage, video_id)[0]
+
         title = self._html_search_regex(
             [r'<h1[^>]*>([^<]+)</h1>', r'Title:</th><td>([^<]+)</td>'],
             webpage, 'title')
+
+        info.update({
+            'id': video_id,
+            'title': title,
+            'age_limit': 18,
+        })
+
         thumbnail = self._html_search_regex(
             [r'<div class="playlistItem current">.*?<img src="([^"]+)"', r'onclick="showVideoPlayer\(\)"><img src="([^"]+)'],
             webpage, 'thumbnail', fatal=False)
+        info.setdefault('thumbnail', thumbnail)
 
-        return {
-            'id': video_id,
-            'display_id': display_id,
-            'url': video_url,
-            'title': title,
-            'thumbnail': thumbnail,
-            'age_limit': 18,
-        }
+        return info
