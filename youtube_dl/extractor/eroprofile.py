@@ -4,10 +4,7 @@ import re
 
 from .common import InfoExtractor
 from ..compat import compat_urllib_parse_urlencode
-from ..utils import (
-    ExtractorError,
-    unescapeHTML
-)
+from ..utils import ExtractorError
 
 
 class EroProfileIE(InfoExtractor):
